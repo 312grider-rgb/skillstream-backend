@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: skillstream-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false          # You enter this in the Render dashboard
+      - key: SECRET_KEY
+        generateValue: true  # Render auto-generates a secure secret
+    healthCheckPath: /health
