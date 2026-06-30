@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>SkillStream — My Account</title>
+<meta name="description" content="Manage your SkillStream profile, skills, and session history."/>
+<meta name="theme-color" content="#7B6FFF"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237B6FFF'/><text y='.9em' font-size='80' x='10'>🎓</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+html[lang="ar"] body{font-family:'Noto Sans Arabic','Inter',sans-serif}
+.lang-switcher{position:relative}
+.lang-btn{display:flex;align-items:center;gap:5px;background:var(--pill);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-sm);padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer}
+.lang-btn:hover{border-color:var(--accent)}
+.lang-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);min-width:150px;box-shadow:var(--shadow);display:none;z-index:999;overflow:hidden}
+html[dir="rtl"] .lang-dropdown{right:auto;left:0}
+.lang-dropdown.open{display:block}
+.lang-option{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;font-size:12px;font-weight:500;border:none;background:none;color:var(--text);width:100%;text-align:left;transition:all .15s}
+html[dir="rtl"] .lang-option{text-align:right}
+.lang-option:hover{background:rgba(123,111,255,.08);color:var(--accent)}
+.lang-option.active{color:var(--accent);font-weight:700}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07080C;--surface:#0F1118;--card:#161920;--border:#1E2130;
+  --accent:#7B6FFF;--accent-dark:#5A4FD8;--live:#FF3D5A;--green:#00E5A0;
+  --yellow:#FFB930;--blue:#4B9EFF;--text:#ECEDF5;--muted:#5A5E75;
+  --pill:#1A1D28;--glass:rgba(15,17,24,0.92);--shadow:0 8px 40px rgba(0,0,0,0.7);
+  --radius:14px;--radius-sm:8px;--radius-full:9999px
+}
+html,body{min-height:100%;background:var(--bg);font-family:'Inter',sans-serif;font-size:14px;color:var(--text)}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:var(--radius-full)}
+
+/* TOP NAV */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:60px;background:var(--glass);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100}
+.logo{font-family:'Syne',sans-serif;font-weight:900;font-size:22px;color:var(--text);text-decoration:none}
+.logo span{background:linear-gradient(135deg,var(--accent),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:8px;align-items:center}
+.nav-btn{background:var(--pill);border:1px solid var(--border);color:var(--muted);border-radius:var(--radius-sm);padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s}
+.nav-btn:hover{border-color:var(--accent);color:var(--text)}
+.nav-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.nav-btn.primary:hover{background:var(--accent-dark)}
+.nav-btn.danger{background:rgba(255,61,90,.08);border-color:rgba(255,61,90,.2);color:var(--live)}
+.nav-btn.danger:hover{background:var(--live);color:#fff}
+
+/* PAGE */
+.page{max-width:700px;margin:0 auto;padding:32px 20px 60px}
+
+/* HERO AVATAR SECTION */
+.profile-hero{display:flex;flex-direction:column;align-items:center;gap:16px;padding:40px 24px 32px;background:linear-gradient(160deg,#14103a 0%,#0a0c18 100%);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:24px;position:relative;overflow:hidden}
+.profile-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(123,111,255,.12) 0%,transparent 70%);pointer-events:none}
+.avatar-wrap{position:relative;cursor:pointer}
+.avatar-img{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);background:var(--card);display:block}
+.avatar-placeholder{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--blue));display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#fff;border:3px solid rgba(123,111,255,.4);flex-shrink:0}
+.avatar-edit{position:absolute;bottom:2px;right:2px;width:28px;height:28px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px}
+.hero-name{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;text-align:center}
+.hero-role{display:inline-flex;align-items:center;gap:6px;background:rgba(123,111,255,.12);border:1px solid rgba(123,111,255,.25);border-radius:var(--radius-full);padding:5px 14px;font-size:12px;font-weight:700;color:var(--accent)}
+.hero-contact{font-size:13px;color:var(--muted);text-align:center}
+.hero-bio{font-size:13px;color:var(--muted);text-align:center;max-width:400px;line-height:1.6;font-style:italic}
+.hero-stats{display:flex;gap:24px;margin-top:4px}
+.stat{text-align:center}
+.stat .val{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text)}
+.stat .lbl{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* SECTIONS */
+.section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden}
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.section-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.section-body{padding:20px}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-row.full{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+input[type=text],input[type=tel],input[type=email],textarea,select{
+  background:var(--card);border:1px solid var(--border);color:var(--text);
+  border-radius:var(--radius-sm);padding:11px 14px;font-size:14px;
+  outline:none;transition:all .2s;font-family:'Inter',sans-serif;width:100%
+}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(123,111,255,.1)}
+textarea{resize:vertical;min-height:80px;line-height:1.5}
+select option{background:var(--card)}
+
+/* ROLE TOGGLE */
+.role-toggle{display:flex;background:var(--card);border-radius:var(--radius-sm);padding:4px;gap:4px;border:1px solid var(--border)}
+.role-opt{flex:1;padding:10px;text-align:center;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:none;color:var(--muted);transition:all .2s;font-family:'Inter',sans-serif}
+.role-opt.active{background:var(--accent);color:#fff}
+
+/* SKILLS TAGS */
+.tags-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tag{display:flex;align-items:center;gap:6px;background:rgba(123,111,255,.1);border:1px solid rgba(123,111,255,.2);color:var(--accent);border-radius:var(--radius-full);padding:5px 12px;font-size:12px;font-weight:600}
+.tag .remove{cursor:pointer;opacity:.6;font-size:14px;line-height:1}
+.tag .remove:hover{opacity:1}
+.tag-input-row{display:flex;gap:8px;margin-top:10px}
+.tag-input-row input{flex:1}
+.add-tag-btn{background:var(--accent);border:none;color:#fff;border-radius:var(--radius-sm);padding:0 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+
+/* SAVE BTN */
+.save-bar{display:flex;gap:10px;justify-content:flex-end;padding-top:16px;border-top:1px solid var(--border);margin-top:16px}
+.btn{padding:11px 24px;border-radius:var(--radius-sm);font-size:14px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;border:none;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-dark);transform:scale(1.02)}
+.btn-ghost{background:var(--pill);color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--text)}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#000;border-radius:var(--radius-full);padding:12px 28px;font-weight:800;font-size:14px;z-index:300;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:all .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{background:var(--live);color:#fff}
+
+/* DANGER ZONE */
+.danger-zone{border-color:rgba(255,61,90,.2)}
+.danger-zone .section-header{border-color:rgba(255,61,90,.15);background:rgba(255,61,90,.03)}
+.danger-zone .section-title{color:var(--live)}
+
+/* EMPTY STATE (no account yet) */
+.empty-state{display:none;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;gap:16px}
+.empty-state.show{display:flex}
+.empty-state .icon{font-size:56px}
+.empty-state h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
+.empty-state p{color:var(--muted);max-width:320px;line-height:1.6}
+
+/* SESSION HISTORY */
+.session-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.session-item:last-child{border-bottom:none}
+.session-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.session-info{flex:1}
+.session-name{font-size:13px;font-weight:600}
+.session-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.session-dur{font-size:12px;color:var(--muted);font-family:'Syne',sans-serif;font-weight:700}
+
+@media(max-width:600px){
+  .form-row{grid-template-columns:1fr}
+  .hero-stats{gap:16px}
+  .topbar{padding:0 16px}
+  .page{padding:20px 14px 60px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="logo" href="index.html">Skill<span>Stream</span></a>
+  <div class="nav-links">
+    <a class="nav-btn" href="skillstream-classroom.html" id="spJoinBtn">🎥 Join Session</a>
+    <div class="lang-switcher" id="spLangSwitcher">
+      <button class="lang-btn" onclick="toggleSPLang()">🌐 <span id="spLangName">EN</span> ▾</button>
+      <div class="lang-dropdown" id="spLangDropdown">
+        <button class="lang-option" onclick="setSPLang('en')">🇬🇧 English</button>
+        <button class="lang-option" onclick="setSPLang('ar')">🇸🇦 العربية</button>
+        <button class="lang-option" onclick="setSPLang('fr')">🇫🇷 Français</button>
+        <button class="lang-option" onclick="setSPLang('es')">🇪🇸 Español</button>
+        <button class="lang-option" onclick="setSPLang('zh')">🇨🇳 中文</button>
+      </div>
+    </div>
+    <button class="nav-btn danger" onclick="signOut()" id="spSignOutBtn">Sign Out</button>
+  </div>
+</div>
+
+<div class="page" id="page">
+
+  <!-- PROFILE HERO -->
+  <div class="profile-hero" id="profileHero">
+    <div class="avatar-wrap" onclick="document.getElementById('avatarInput').click()" title="Change photo">
+      <div class="avatar-placeholder" id="avatarPlaceholder">?</div>
+      <img class="avatar-img" id="avatarImg" src="" alt="Avatar" style="display:none"/>
+      <div class="avatar-edit">✏️</div>
+    </div>
+    <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatar(this)"/>
+    <div class="hero-name" id="heroName">Your Name</div>
+    <div class="hero-role" id="heroRole">👤 Student</div>
+    <div class="hero-contact" id="heroContact"></div>
+    <div class="hero-bio" id="heroBio" style="display:none"></div>
+    <div class="hero-stats">
+      <div class="stat"><div class="val" id="statSessions">0</div><div class="lbl">Sessions</div></div>
+      <div class="stat"><div class="val" id="statHours">0h</div><div class="lbl">Hours</div></div>
+      <div class="stat"><div class="val" id="statSkills">0</div><div class="lbl">Skills</div></div>
+    </div>
+  </div>
+
+  <!-- PERSONAL INFO -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">👤 Personal Info</div>
+    </div>
+    <div class="section-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="fName" placeholder="Your full name"/>
+        </div>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="fUsername" placeholder="@handle"/>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea id="fBio" placeholder="Tell others a bit about yourself…"></textarea>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>I am a</label>
+          <div class="role-toggle">
+            <button class="role-opt active" id="roleStudent" onclick="setRole('student')">🎓 Student</button>
+            <button class="role-opt" id="roleTeacher" onclick="setRole('teacher')">📚 Teacher</button>
+            <button class="role-opt" id="roleBoth" onclick="setRole('both')">⚡ Both</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📬 Contact</div>
+    </div>
+    <div class="section-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="fPhone" placeholder="+1 234 567 8900"/>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="fEmail" placeholder="you@example.com"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Country</label>
+          <input type="text" id="fCountry" placeholder="e.g. United States"/>
+        </div>
+        <div class="form-group">
+          <label>Timezone</label>
+          <select id="fTimezone">
+            <option value="">Select timezone…</option>
+            <option>UTC-12:00</option><option>UTC-11:00</option><option>UTC-10:00</option>
+            <option>UTC-09:00</option><option>UTC-08:00 (PST)</option><option>UTC-07:00 (MST)</option>
+            <option>UTC-06:00 (CST)</option><option>UTC-05:00 (EST)</option><option>UTC-04:00</option>
+            <option>UTC-03:00</option><option>UTC-02:00</option><option>UTC-01:00</option>
+            <option>UTC+00:00 (GMT)</option><option>UTC+01:00 (CET)</option><option>UTC+02:00 (EET)</option>
+            <option>UTC+03:00 (EAT/AST)</option><option>UTC+04:00 (GST)</option><option>UTC+05:00</option>
+            <option>UTC+05:30 (IST)</option><option>UTC+06:00</option><option>UTC+07:00 (WIB)</option>
+            <option>UTC+08:00 (CST/HKT)</option><option>UTC+09:00 (JST)</option><option>UTC+10:00 (AEST)</option>
+            <option>UTC+11:00</option><option>UTC+12:00 (NZST)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILLS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">⚡ Skills & Subjects</div>
+    </div>
+    <div class="section-body">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Add the topics you teach or want to learn.</div>
+      <div class="tags-wrap" id="tagsWrap"></div>
+      <div class="tag-input-row">
+        <input type="text" id="tagInput" placeholder="e.g. Python, Calculus, Design…" onkeydown="if(event.key==='Enter')addTag()"/>
+        <button class="add-tag-btn" onclick="addTag()">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECENT SESSIONS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🕒 Recent Sessions</div>
+    </div>
+    <div class="section-body" id="sessionHistory">
+      <div style="color:var(--muted);font-size:13px;text-align:center;padding:12px 0">No sessions yet — join your first one!</div>
+    </div>
+  </div>
+
+  <!-- SAVE -->
+  <div class="save-bar" style="padding-top:0;border-top:none;margin-top:0">
+    <button class="btn btn-ghost" onclick="resetForm()">Discard</button>
+    <button class="btn btn-primary" onclick="saveProfile()">💾 Save Account</button>
+  </div>
+
+  <!-- DANGER ZONE -->
+  <div class="section danger-zone" style="margin-top:32px">
+    <div class="section-header">
+      <div class="section-title">⚠️ Danger Zone</div>
+    </div>
+    <div class="section-body" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:14px;font-weight:600">Delete Account</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">Permanently remove your profile and all saved data.</div>
+      </div>
+      <button class="btn" style="background:rgba(255,61,90,.1);border:1px solid rgba(255,61,90,.25);color:var(--live)" onclick="deleteAccount()">🗑️ Delete Account</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SS_KEY = 'skillstream_user';
+let skills = [];
+let currentRole = 'student';
+let avatarData = null;
+
+// ===== LOAD PROFILE =====
+function loadProfile() {
+  const saved = JSON.parse(localStorage.getItem(SS_KEY) || 'null');
+  if (!saved) return;
+
+  // Hero
+  document.getElementById('heroName').textContent = saved.name || 'Your Name';
+  const roleLabel = saved.role === 'teacher' ? '📚 Teacher' : saved.role === 'both' ? '⚡ Teacher & Student' : '🎓 Student';
+  document.getElementById('heroRole').textContent = roleLabel;
+  const contacts = [saved.phone, saved.email].filter(Boolean).join(' · ');
+  document.getElementById('heroContact').textContent = contacts;
+  if (saved.bio) {
+    document.getElementById('heroBio').textContent = saved.bio;
+    document.getElementById('heroBio').style.display = '';
+  }
+  if (saved.avatar) {
+    document.getElementById('avatarImg').src = saved.avatar;
+    document.getElementById('avatarImg').style.display = 'block';
+    document.getElementById('avatarPlaceholder').style.display = 'none';
+  } else {
+    document.getElementById('avatarPlaceholder').textContent = (saved.name || 'Y').charAt(0).toUpperCase();
+  }
+
+  // Stats
+  document.getElementById('statSessions').textContent = saved.sessions || 0;
+  document.getElementById('statHours').textContent = (saved.hours || 0) + 'h';
+  document.getElementById('statSkills').textContent = (saved.skills || []).length;
+
+  // Form fields
+  document.getElementById('fName').value = saved.name || '';
+  document.getElementById('fUsername').value = saved.username || '';
+  document.getElementById('fBio').value = saved.bio || '';
+  document.getElementById('fPhone').value = saved.phone || '';
+  document.getElementById('fEmail').value = saved.email || '';
+  document.getElementById('fCountry').value = saved.country || '';
+  document.getElementById('fTimezone').value = saved.timezone || '';
+  avatarData = saved.avatar || null;
+
+  // Role
+  setRole(saved.role || 'student');
+
+  // Skills
+  skills = saved.skills || [];
+  renderTags();
+
+  // Sessions
+  renderSessions(saved.sessionHistory || []);
+}
+
+function renderSessions(history) {
+  const el = document.getElementById('sessionHistory');
+  if (!history.length) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px 0">No sessions yet — join your first one!</div>';
+    return;
+  }
+  el.innerHTML = history.slice(-5).reverse().map(s => `
+    <div class="session-item">
+      <div class="session-dot"></div>
+      <div class="session-info">
+        <div class="session-name">${s.name}</div>
+        <div class="session-meta">${s.date}</div>
+      </div>
+      <div class="session-dur">${s.duration}</div>
+    </div>`).join('');
+}
+
+// ===== ROLE =====
+function setRole(role) {
+  currentRole = role;
+  ['student','teacher','both'].forEach(r => {
+    document.getElementById('role' + r.charAt(0).toUpperCase() + r.slice(1)).classList.toggle('active', r === role);
+  });
+}
+
+// ===== AVATAR =====
+function handleAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    avatarData = e.target.result;
+    document.getElementById('avatarImg').src = avatarData;
+    document.getElementById('avatarImg').style.display = 'block';
+    document.getElementById('avatarPlaceholder').style.display = 'none';
+    showToast('📷 Photo updated — save to keep it');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===== TAGS =====
+function renderTags() {
+  document.getElementById('tagsWrap').innerHTML = skills.map((s,i) =>
+    `<div class="tag">${s}<span class="remove" onclick="removeTag(${i})">×</span></div>`
+  ).join('');
+  document.getElementById('statSkills').textContent = skills.length;
+}
+
+function addTag() {
+  const inp = document.getElementById('tagInput');
+  const val = inp.value.trim();
+  if (!val) return;
+  if (!skills.includes(val)) { skills.push(val); renderTags(); }
+  inp.value = '';
+  inp.focus();
+}
+
+function removeTag(i) {
+  skills.splice(i, 1);
+  renderTags();
+}
+
+// ===== SAVE =====
+function saveProfile() {
+  const name = document.getElementById('fName').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+  const email = document.getElementById('fEmail').value.trim();
+
+  if (!name) { showToast('Please enter your name', true); return; }
+  if (!phone && !email) { showToast('Add a phone number or email', true); return; }
+
+  const existing = JSON.parse(localStorage.getItem(SS_KEY) || '{}');
+  const profile = {
+    ...existing,
+    name,
+    username: document.getElementById('fUsername').value.trim(),
+    bio: document.getElementById('fBio').value.trim(),
+    phone,
+    email,
+    country: document.getElementById('fCountry').value.trim(),
+    timezone: document.getElementById('fTimezone').value,
+    role: currentRole,
+    skills,
+    avatar: avatarData,
+    updatedAt: new Date().toISOString(),
+    sessions: existing.sessions || 0,
+    hours: existing.hours || 0,
+    sessionHistory: existing.sessionHistory || [],
+  };
+
+  localStorage.setItem(SS_KEY, JSON.stringify(profile));
+  showToast('✅ Account saved!');
+  loadProfile(); // refresh hero
+}
+
+function resetForm() {
+  loadProfile();
+  showToast('Changes discarded');
+}
+
+// ===== SIGN OUT =====
+function signOut() {
+  if (!confirm('Sign out? Your profile stays saved on this device.')) return;
+  window.location.href = 'skillstream-classroom.html';
+}
+
+// ===== DELETE =====
+function deleteAccount() {
+  if (!confirm('Delete your account permanently? This cannot be undone.')) return;
+  if (!confirm('Are you sure? All your profile data will be removed.')) return;
+  localStorage.removeItem(SS_KEY);
+  showToast('Account deleted');
+  setTimeout(() => window.location.href = 'skillstream-classroom.html', 1500);
+}
+
+// ===== TOAST =====
+function showToast(msg, error = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (error ? ' error' : '') + ' show';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ===== LANGUAGE SWITCHER =====
+const SP_I18N = {
+  en:{ join:'🎥 Join Session', signout:'Sign Out', my_account:'My Account', personal_info:'👤 Personal Info', contact:'📬 Contact', skills:'⚡ Skills & Subjects', sessions:'🕒 Recent Sessions', save:'💾 Save Account', discard:'Discard', danger:'⚠️ Danger Zone', delete_btn:'🗑️ Delete Account', delete_title:'Delete Account', delete_desc:'Permanently remove your profile and all saved data.', stat_sessions:'Sessions', stat_hours:'Hours', stat_skills:'Skills' },
+  ar:{ join:'🎥 انضم إلى جلسة', signout:'تسجيل الخروج', my_account:'حسابي', personal_info:'👤 المعلومات الشخصية', contact:'📬 التواصل', skills:'⚡ المهارات والمواضيع', sessions:'🕒 الجلسات الأخيرة', save:'💾 حفظ الحساب', discard:'تجاهل', danger:'⚠️ منطقة الخطر', delete_btn:'🗑️ حذف الحساب', delete_title:'حذف الحساب', delete_desc:'إزالة ملفك الشخصي وجميع بياناتك بشكل دائم.', stat_sessions:'جلسات', stat_hours:'ساعات', stat_skills:'مهارات' },
+  fr:{ join:'🎥 Rejoindre', signout:'Déconnexion', my_account:'Mon compte', personal_info:'👤 Infos personnelles', contact:'📬 Contact', skills:'⚡ Compétences', sessions:'🕒 Sessions récentes', save:'💾 Sauvegarder', discard:'Annuler', danger:'⚠️ Zone dangereuse', delete_btn:'🗑️ Supprimer le compte', delete_title:'Supprimer le compte', delete_desc:'Supprimer définitivement votre profil et toutes vos données.', stat_sessions:'Sessions', stat_hours:'Heures', stat_skills:'Compétences' },
+  es:{ join:'🎥 Unirse', signout:'Cerrar sesión', my_account:'Mi cuenta', personal_info:'👤 Información personal', contact:'📬 Contacto', skills:'⚡ Habilidades', sessions:'🕒 Sesiones recientes', save:'💾 Guardar cuenta', discard:'Descartar', danger:'⚠️ Zona peligrosa', delete_btn:'🗑️ Eliminar cuenta', delete_title:'Eliminar cuenta', delete_desc:'Eliminar permanentemente tu perfil y todos tus datos.', stat_sessions:'Sesiones', stat_hours:'Horas', stat_skills:'Habilidades' },
+  zh:{ join:'🎥 加入课程', signout:'退出登录', my_account:'我的账户', personal_info:'👤 个人信息', contact:'📬 联系方式', skills:'⚡ 技能与科目', sessions:'🕒 最近课程', save:'💾 保存账户', discard:'放弃', danger:'⚠️ 危险区域', delete_btn:'🗑️ 删除账户', delete_title:'删除账户', delete_desc:'永久删除您的个人资料和所有保存的数据。', stat_sessions:'课程', stat_hours:'小时', stat_skills:'技能' },
+};
+
+function setSPLang(lang) {
+  localStorage.setItem('ss_lang', lang);
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  const t = SP_I18N[lang];
+  const names = {en:'EN',ar:'عر',fr:'FR',es:'ES',zh:'中文'};
+  document.getElementById('spLangName').textContent = names[lang];
+  document.querySelectorAll('#spLangDropdown .lang-option').forEach(o => o.classList.toggle('active', o.getAttribute('onclick') === `setSPLang('${lang}')`));
+  const el = (id) => document.getElementById(id);
+  if(el('spJoinBtn')) el('spJoinBtn').textContent = t.join;
+  if(el('spSignOutBtn')) el('spSignOutBtn').textContent = t.signout;
+  // Section titles
+  document.querySelectorAll('.section-title').forEach((s,i) => {
+    const keys = ['personal_info','contact','skills','sessions'];
+    if(t[keys[i]]) s.textContent = t[keys[i]];
+  });
+  // Buttons
+  const saveBtn = document.querySelector('.btn-primary'); if(saveBtn) saveBtn.textContent = t.save;
+  const discardBtn = document.querySelector('.btn-ghost'); if(discardBtn) discardBtn.textContent = t.discard;
+  // Stat labels
+  const statLbls = document.querySelectorAll('.stat .lbl');
+  if(statLbls[0]) statLbls[0].textContent = t.stat_sessions;
+  if(statLbls[1]) statLbls[1].textContent = t.stat_hours;
+  if(statLbls[2]) statLbls[2].textContent = t.stat_skills;
+  closeSPLangMenu();
+}
+function toggleSPLang() { document.getElementById('spLangDropdown').classList.toggle('open'); }
+function closeSPLangMenu() { document.getElementById('spLangDropdown').classList.remove('open'); }
+document.addEventListener('click', e => { const sw = document.getElementById('spLangSwitcher'); if(sw && !sw.contains(e.target)) closeSPLangMenu(); });
+
+// ===== INIT =====
+loadProfile();
+setSPLang(localStorage.getItem('ss_lang') || 'en');
+
+// If no profile yet, pre-fill name placeholder
+const saved = JSON.parse(localStorage.getItem(SS_KEY) || 'null');
+if (!saved) {
+  document.getElementById('avatarPlaceholder').textContent = '👤';
+  document.getElementById('heroContact').textContent = 'Fill in your details below to get started';
+}
+</script>
+</body>
+</html>
